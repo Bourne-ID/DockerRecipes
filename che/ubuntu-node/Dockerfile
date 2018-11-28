@@ -26,4 +26,4 @@ RUN sudo dpkg --add-architecture i386 && \
     sudo apt-get -y clean && \
     sudo rm -rf /var/lib/apt/lists/*
     
-RUN npm install -g markdown-table-cli
+RUN sudo npm install -g markdown-table-cli
