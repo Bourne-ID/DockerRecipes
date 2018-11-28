@@ -9,6 +9,7 @@ RUN sudo dpkg --add-architecture i386 && \
     gcc \ 
     make \
     npm \
+    nodejs-legacy \
     automake \
     lib32gcc1 \
     libstdc++6 \
