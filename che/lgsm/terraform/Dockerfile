@@ -12,14 +12,12 @@ RUN sudo dpkg --add-architecture i386 && \
     jq \
     wget \
     unzip \
-    tmux \
+    tmux && \
     sudo apt-get clean && \
     sudo apt-get -y autoremove && \
     sudo apt-get -y clean && \
     sudo rm -rf /var/lib/apt/lists/*
     
-RUN sudo npm install -g markdown-table-cli
-
 COPY https://releases.hashicorp.com/terraform/0.11.9/terraform_0.11.9_linux_amd64.zip /terraform
 
 ENV PATH="PATH="/terraform:${PATH}"
