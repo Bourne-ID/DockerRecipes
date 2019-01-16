@@ -18,6 +18,7 @@ RUN sudo dpkg --add-architecture i386 && \
     sudo apt-get -y clean && \
     sudo rm -rf /var/lib/apt/lists/*
     
-ADD https://releases.hashicorp.com/terraform/0.11.9/terraform_0.11.9_linux_amd64.zip /terraform
+ADD https://releases.hashicorp.com/terraform/0.11.9/terraform_0.11.9_linux_amd64.zip /terraform/terraform.zip
+RUN unzip /terraform/terraform.zip
 
 ENV PATH="/terraform:${PATH}"
