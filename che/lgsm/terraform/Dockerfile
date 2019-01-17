@@ -20,6 +20,6 @@ RUN sudo dpkg --add-architecture i386 && \
     
 ADD https://releases.hashicorp.com/terraform/0.11.9/terraform_0.11.9_linux_amd64.zip /terraform/terraform.zip
 WORKDIR /terraform
-RUN unzip /terraform/terraform.zip
+RUN sudo unzip /terraform/terraform.zip && sudo rm /terraform/terraform.zip
 
 ENV PATH="/terraform:${PATH}"
