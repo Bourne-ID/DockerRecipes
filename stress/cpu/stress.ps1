@@ -1,11 +1,15 @@
 $minutesToRun = $env:RunTime
+$coresToRun = $env:CoresToRun
 if (!$minutesToRun) {
-    $minutesToRun = 1;
+    $minutesToRun = 10;
+}
+if (!$coresToRun) {
+    $coresToRun = $env:NUMBER_OF_PROCESSORS;
 }
 
 $timeend = (Get-Date) + (New-TimeSpan -m $minutesToRun)
 
-foreach ($loopnumber in 1..$env:NUMBER_OF_PROCESSORS){
+foreach ($loopnumber in 1..$coresToRun){
     Start-Job -ScriptBlock{ param($timeend)
     $result = 1
     foreach ($number in 1..2147483647){
@@ -16,4 +20,4 @@ foreach ($loopnumber in 1..$env:NUMBER_OF_PROCESSORS){
     }# end foreach
     } -Arg $timeend # end Start-Job
 }# end foreach
-Get-Job | Wait-Job
+Get-Job | Wait-Job # Wait for the launched jobs to finish
