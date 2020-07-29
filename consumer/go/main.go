@@ -41,7 +41,7 @@ func main() {
 	flag.StringVar(&server, "server", LookupEnvOrString("SERVER", server), "server of the service to connect to")
 	flag.StringVar(&username, "username", LookupEnvOrString("USERNAME", username), "Username of the service to connect to")
 	flag.StringVar(&password, "password", LookupEnvOrString("PASSWORD", password), "Password of the service to connect to")
-	flag.StringVar(&queue, "queue", LookupEnvOrString("QUEUE", password), "Queue Name")
+	flag.StringVar(&queue, "queue", LookupEnvOrString("QUEUE", queue), "Queue Name")
 	flag.IntVar(&count, "count", LookupEnvOrInt("COUNT", count), "How many messages to produce (0=unlimited)")
 	flag.Parse()
 

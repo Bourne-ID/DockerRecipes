@@ -49,7 +49,7 @@ func main() {
 	flag.IntVar(&count, "count", LookupEnvOrInt("COUNT", count), "How many messages to produce (0=unlimited)")
 	flag.IntVar(&mps, "mps", LookupEnvOrInt("MPS", mps), "How Many Messages Per Second (default 20)")
 	flag.StringVar(&output_method, "output_method", LookupEnvOrString("OUTPUT", output_method), "Where to output messages")
-	flag.StringVar(&destination, "destination", LookupEnvOrString("DESTINATION", server), "Queue name (ActiveMQ)")
+	flag.StringVar(&destination, "destination", LookupEnvOrString("DESTINATION", destination), "Queue name (ActiveMQ)")
 	flag.StringVar(&server, "server", LookupEnvOrString("SERVER", server), "server of the service to connect to")
 	flag.StringVar(&username, "username", LookupEnvOrString("USERNAME", username), "Username of the service to connect to")
 	flag.StringVar(&password, "password", LookupEnvOrString("PASSWORD", password), "Password of the service to connect to")
