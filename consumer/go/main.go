@@ -99,7 +99,7 @@ func main() {
 			}
 		}
 
-		log.Println(input + strconv.Itoa(nounce))
+		log.Println(input + "|" + strconv.Itoa(nounce))
 		log.Println(sha)
 	}
 	println("receiver finished")
