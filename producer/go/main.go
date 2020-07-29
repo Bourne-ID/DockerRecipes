@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"math/rand"
 	"os"
 	"sync"
+
+	"golang.org/x/time/rate"
 )
 import "time"
 import "flag"
@@ -15,6 +18,7 @@ var (
 	length        = 1024
 	output_method = "activemq"
 	count         = 0 //unlimited
+	mps           = 20
 	destination   = "address.foo"
 	server        = "127.0.0.1:61616"
 	username      = ""
@@ -43,6 +47,7 @@ func main() {
 	flag.IntVar(&difficulty, "difficulty", LookupEnvOrInt("DIFFICULTY", difficulty), "Sets the difficulty of the calculation")
 	flag.IntVar(&length, "length", LookupEnvOrInt("LENGTH", length), "Sets the length of string to produce (IE message size)")
 	flag.IntVar(&count, "count", LookupEnvOrInt("COUNT", count), "How many messages to produce (0=unlimited)")
+	flag.IntVar(&mps, "mps", LookupEnvOrInt("MPS", mps), "How Many Messages Per Second (default 20)")
 	flag.StringVar(&output_method, "output_method", LookupEnvOrString("OUTPUT", output_method), "Where to output messages")
 	flag.StringVar(&destination, "destination", LookupEnvOrString("DESTINATION", server), "Queue name (ActiveMQ)")
 	flag.StringVar(&server, "server", LookupEnvOrString("SERVER", server), "server of the service to connect to")
@@ -50,6 +55,7 @@ func main() {
 	flag.StringVar(&password, "password", LookupEnvOrString("PASSWORD", password), "Password of the service to connect to")
 
 	flag.Parse()
+	rlim := rate.NewLimiter(rate.Every(time.Second/time.Duration(mps)), 10)
 
 	var output output
 	if output_method == "activemq" {
@@ -64,7 +70,13 @@ func main() {
 	for i := 0; count == 0 || i < count; i++ {
 		test := RandStringRunes(length)
 		data := strconv.Itoa(difficulty) + ":" + test
+		err := rlim.Wait(context.Background())
+		if err != nil {
+			log.Println("Error: Rate Wait:", err)
+			return
+		}
 		wg.Add(1)
+
 		go func(dataToSend string) {
 			defer wg.Done()
 			output.out(data)
