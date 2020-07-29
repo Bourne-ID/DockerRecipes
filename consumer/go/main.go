@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"github.com/go-stomp/stomp"
+	"golang.org/x/time/rate"
 	"log"
 	"os"
+	"time"
 )
 import "strings"
 import "crypto/sha256"
@@ -13,6 +16,7 @@ import "strconv"
 
 var (
 	count    = 0 //unlimited
+	mps      = 0
 	queue    = "address.foo"
 	server   = "127.0.0.1:61616"
 	username = ""
@@ -43,6 +47,7 @@ func main() {
 	flag.StringVar(&password, "password", LookupEnvOrString("PASSWORD", password), "Password of the service to connect to")
 	flag.StringVar(&queue, "queue", LookupEnvOrString("QUEUE", queue), "Queue Name")
 	flag.IntVar(&count, "count", LookupEnvOrInt("COUNT", count), "How many messages to produce (0=unlimited)")
+	flag.IntVar(&mps, "mps", LookupEnvOrInt("MPS", mps), "How any messages per second (0=unlimited)")
 	flag.Parse()
 
 	var options = []func(*stomp.Conn) error{
@@ -66,7 +71,20 @@ func main() {
 		panic(err)
 	}
 
+	var rlim *rate.Limiter
+	if mps > 0 {
+		rlim = rate.NewLimiter(rate.Every(time.Second/time.Duration(mps)), 1)
+	}
+
 	for i := 1; count == 0 || i <= count; i++ {
+		if mps > 0 {
+			err := rlim.Wait(context.Background())
+			if err != nil {
+				log.Println("Error: Rate Wait:", err)
+				return
+			}
+		}
+
 		msg := <-sub.C
 		input := string(msg.Body)
 		splitLoc := strings.Index(input, ":")
